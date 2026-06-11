@@ -43,8 +43,8 @@ jobs:
 
           SESSION_NAME="gha-cdk-${STUDENT}-${RUN_ID}-${ATTEMPT}"
 
-          echo "SESSION_NAME=${SESSION_NAME}" >> $GITHUB_ENV
-          echo "Generated session name: $SESSION_NAME"
+          echo "session-name=${SESSION_NAME}" >> $GITHUB_OUTPUT
+          echo "Generated session name: ${SESSION_NAME}"
           echo "Length: ${#SESSION_NAME} characters (max 64)"
 
           # Validate length
@@ -57,7 +57,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
             role-to-assume: ${{ secrets.AWS_ROLE_ARN}}
-            role-session-name: $SESSION_NAME
+            role-session-name: ${{ steps.session-naming.outputs.session-name}}
             aws-region: ${{ env.AWS_REGION }}
 
       - name: Verify OIDC credentials
