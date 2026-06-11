@@ -6,18 +6,20 @@ on:
     branches: main
     types: [ opened, synchronize, reopened ]
 
+env:
+  BAKEHOUSE_STACK_NAME: ${{secrets.BAKEHOUSE_STACK_NAME}}
+
 jobs:
-  explore-github-actions:
+  run-install-script:
+    name: Run install script
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v6
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Check env variable
+        run: echo $BAKEHOUSE_STACK_NAME
+
+      - name: Run install script
+        run: ./install.sh
