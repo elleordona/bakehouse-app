@@ -69,3 +69,9 @@ jobs:
 
           ROLE_SESSION=$(echo "${IDENTITY}" | jq -r '.Arn' | grep -oP '(?<=/)[^/]+$')
           echo "Current session: ${ROLE_SESSION}"
+
+      - name: Synth the stack
+        run: npx cdk synth
+
+      - name: Deploy the stack
+        run: npx cdk deploy
