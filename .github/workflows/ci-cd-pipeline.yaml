@@ -6,6 +6,10 @@ on:
     branches: main
     types: [ opened, synchronize, reopened ]
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AWS_REGION: eu-west-2
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN}}
@@ -39,8 +43,8 @@ jobs:
 
           SESSION_NAME="gha-cdk-${STUDENT}-${RUN_ID}-${ATTEMPT}"
 
-          echo "session-name=${SESSION_NAME}" >> $GITHUB_ENV
-          echo "Generated session name: ${{ env.session-name }}"
+          echo "SESSION_NAME=${SESSION_NAME}" >> $GITHUB_ENV
+          echo "Generated session name: $SESSION_NAME"
           echo "Length: ${#SESSION_NAME} characters (max 64)"
 
           # Validate length
@@ -53,7 +57,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
             role-to-assume: ${{ secrets.AWS_ROLE_ARN}}
-            role-session-name: ${{ env.session-name }}
+            role-session-name: $SESSION_NAME
             aws-region: ${{ env.AWS_REGION }}
 
       - name: Verify OIDC credentials
