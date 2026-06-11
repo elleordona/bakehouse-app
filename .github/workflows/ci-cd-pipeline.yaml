@@ -6,6 +6,10 @@ on:
     branches: main
     types: [ opened, synchronize, reopened ]
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   AWS_REGION: eu-west-2
   AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN}}
@@ -15,10 +19,6 @@ jobs:
   deploy:
     name: Deploy stack to AWS
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Checkout repository
@@ -74,6 +74,9 @@ jobs:
 
           ROLE_SESSION=$(echo "${IDENTITY}" | jq -r '.Arn' | grep -oP '(?<=/)[^/]+$')
           echo "Current session: ${ROLE_SESSION}"
+
+      - name: Synth the stack
+        run: npx cdk synth
 
       - name: Deploy the stack
         run: npx cdk deploy --all --require-approval never
