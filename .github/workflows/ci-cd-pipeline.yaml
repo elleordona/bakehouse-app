@@ -1,5 +1,5 @@
 name: ci-cd-pipeline
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.actor }} is running the deploy pipeline 🚀
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
     types: [ opened, synchronize, reopened ]
 
 env:
-  BAKEHOUSE_STACK_NAME: ${{secrets.BAKEHOUSE_STACK_NAME}}
+  BAKEHOUSE_STACK_NAME: ${{ vars.BAKEHOUSE_STACK_NAME }}
 
 jobs:
   run-install-script:
