@@ -7,19 +7,61 @@ on:
     types: [ opened, synchronize, reopened ]
 
 env:
+  AWS_REGION: eu-west-2
+  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN}}
   BAKEHOUSE_STACK_NAME: ${{ vars.BAKEHOUSE_STACK_NAME }}
 
 jobs:
-  run-install-script:
-    name: Run install script
+  deploy:
+    name: Deploy stack to AWS
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
 
-      - name: Check env variable
-        run: echo $BAKEHOUSE_STACK_NAME
-
       - name: Run install script
         run: ./install.sh
+
+      - name: Extract student information # might not need this
+        id: student-info
+        run: |
+          STUDENT_NAME="${{ github.actor }}"
+          echo "name=${STUDENT_NAME}" >> $GITHUB_ENV
+          echo "Student: ${STUDENT_NAME}"
+
+      - name: Generate enhanced session name
+        id: session-naming
+        run: |
+          STUDENT="${{ github.actor }}"
+          RUN_ID="${{ github.run_id }}"
+          ATTEMPT="${{ github.run_attempt }}"
+
+          SESSION_NAME="gha-cdk-${STUDENT}-${RUN_ID}-${ATTEMPT}"
+
+          echo "session-name=${SESSION_NAME}" >> $GITHUB_ENV
+          echo "Generated session name: ${{ env.session-name }}"
+          echo "Length: ${#SESSION_NAME} characters (max 64)"
+
+          # Validate length
+          if [ ${#SESSION_NAME} -gt 64 ]; then
+              echo "❌ Session name too long!"
+              exit 1
+          fi
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            role-to-assume: ${{ secrets.AWS_ROLE_ARN}}
+            role-session-name: ${{ env.session-name }}
+            aws-region: ${{ env.AWS_REGION }}
+
+      - name: Verify OIDC credentials
+        run: |
+          echo "Verifying AWS credentials..."
+          IDENTITY=$(aws sts get-caller-identity)
+          echo "Assumed role:"
+          echo "${IDENTITY}" | jq '.'
+
+          ROLE_SESSION=$(echo "${IDENTITY}" | jq -r '.Arn' | grep -oP '(?<=/)[^/]+$')
+          echo "Current session: ${ROLE_SESSION}"
