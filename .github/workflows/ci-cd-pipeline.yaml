@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo "This PR was merged"
+      - run: echo "The ${{ github.ref }} branch was merged"
 
   deploy:
     name: Deploy stack to AWS
