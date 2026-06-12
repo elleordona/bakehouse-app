@@ -21,7 +21,11 @@ const settings = {
   subDomain: stackName.toLowerCase(),
   dbName: 'dev',
   vpcName: 'CTASharedVPC-vpc',
-  sharedOriginRequestPolicyId: '6d7a8520-10b9-4b88-ae47-770229103b35'
+  sharedOriginRequestPolicyId: '6d7a8520-10b9-4b88-ae47-770229103b35',
+  // github actions variables
+  githubOrg: 'elleordona',
+  githubRepo: 'bakehouse-app',
+  githubRefFilter: '*'
 }
 
 const app = new cdk.App();
@@ -36,6 +40,9 @@ new BakehouseStack(app,`${settings.stackName}-stack`,{
   domainName: settings.domainName,
   dbName: settings.dbName,
   vpcName: settings.vpcName,
-  sharedOriginRequestPolicyId: settings.sharedOriginRequestPolicyId
+  sharedOriginRequestPolicyId: settings.sharedOriginRequestPolicyId,
+  githubOrg: settings.githubOrg,
+  githubRepo: settings.githubRepo,
+  githubRefFilter: settings.githubRefFilter
 });
 
