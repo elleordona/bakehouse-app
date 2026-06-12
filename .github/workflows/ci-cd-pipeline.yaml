@@ -17,11 +17,14 @@ env:
 
 jobs:
   if-merged:
+    name: Running on main branch
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo "The ${{ github.ref }} branch was merged"
+      - run: |
+          echo "The PR was merged"
+          echo "Now running pipeline on main branch"
 
   deploy:
     name: Deploy stack to AWS
@@ -87,3 +90,26 @@ jobs:
 
       - name: Deploy the stack
         run: npx cdk deploy --all --require-approval never
+
+  test:
+    name: Run tests on deployment
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run install script
+        run: ./install.sh
+
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run playwright tests
+        run: npx playwright test
