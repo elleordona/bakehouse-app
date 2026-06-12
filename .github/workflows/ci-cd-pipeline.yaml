@@ -4,7 +4,7 @@ run-name: ${{ github.actor }} is running the deploy pipeline 🚀
 on:
   pull_request:
     branches: main
-    types: [ opened, synchronize, reopened ]
+    types: [ opened, synchronize, reopened, closed ]
 
 permissions:
   id-token: write
@@ -16,6 +16,13 @@ env:
   BAKEHOUSE_STACK_NAME: ${{ vars.BAKEHOUSE_STACK_NAME }}
 
 jobs:
+  if-merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "This PR was merged"
+
   deploy:
     name: Deploy stack to AWS
     runs-on: ubuntu-latest
