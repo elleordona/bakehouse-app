@@ -52,8 +52,10 @@ test.describe('Bakehouse Order Test', () => {
         await page.getByLabel('Customer').selectOption(testCustomerName)
         await page.locator('select').last().selectOption('Butter Croissant')
         await page.locator('button[type=submit]').click()
+        await expect(page.locator('p')).toHaveCount(1)
 
         await customerListLink.click()
+        await expect(page.locator('h2')).toHaveText('Customer List')
 
         const newCustomerOrderAmount = await page.locator('tbody tr').filter({ hasText: testCustomerName}).locator('td:nth-child(4)').textContent()
         expect(newCustomerOrderAmount).toBe(((customerOrderNumber * 1) + 1).toString())
