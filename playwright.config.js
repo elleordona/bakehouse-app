@@ -8,6 +8,7 @@ export default defineConfig({
     ['html'],
     ['github']
   ],
+  workers: 1,
   testDir: './test/playwright',
   use: {
     baseURL: BASE_URL,

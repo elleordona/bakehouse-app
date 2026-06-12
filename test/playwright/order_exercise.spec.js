@@ -4,24 +4,26 @@ test.describe('Bakehouse Order Test', () => {
     const testCustomerName = 'Alice Baker'
     let customerOrderNumber
 
-    test.beforeEach(async ({page}) => {
+    test.describe.configure({ mode: 'serial' })
+
+    test.beforeEach(async ({ page }) => {
         await page.goto('/');
 
         // navigate to customer list
         page.getByText('Customer List').click()
 
         // find the customer order amount
-        customerOrderNumber = await page.locator('tbody tr').filter({ hasText: testCustomerName}).locator('td:nth-child(4)').textContent()
+        customerOrderNumber = await page.locator('tbody tr').filter({ hasText: testCustomerName }).locator('td:nth-child(4)').textContent()
     })
 
-    test('navigate to new order', async ({page}) => {
+    test('navigate to new order', async ({ page }) => {
         const newOrderLink = page.getByText('New Order');
 
         await newOrderLink.click()
         await expect(page.locator('h2')).toHaveText('New Order')
     })
 
-    test('can add new order for test customer using form', async ({page}) => {
+    test('can add new order for test customer using form', async ({ page }) => {
         const newOrderLink = page.getByText('New Order');
 
         await newOrderLink.click()
@@ -37,7 +39,7 @@ test.describe('Bakehouse Order Test', () => {
         await page.locator('button[type=submit]').click()
     })
 
-    test('checking new order appears on the customer list', async ({page}) => {
+    test('checking new order appears on the customer list', async ({ page }) => {
         const newOrderLink = page.getByText('New Order');
         const customerListLink = page.getByText('Customer List')
 
@@ -57,7 +59,7 @@ test.describe('Bakehouse Order Test', () => {
         await customerListLink.click()
         await expect(page.locator('h2')).toHaveText('Customer List')
 
-        const newCustomerOrderAmount = await page.locator('tbody tr').filter({ hasText: testCustomerName}).locator('td:nth-child(4)').textContent()
+        const newCustomerOrderAmount = await page.locator('tbody tr').filter({ hasText: testCustomerName }).locator('td:nth-child(4)').textContent()
         expect(newCustomerOrderAmount).toBe(((customerOrderNumber * 1) + 1).toString())
     })
 })
