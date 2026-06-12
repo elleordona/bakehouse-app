@@ -2,9 +2,6 @@
   "name": "will-robinson-bakehouse-s3",
   "version": "0.1.0",
   "type": "module",
-  "bin": {
-    "will-robinson-bakehouse-s3": "bin/will-robinson-bakehouse-s3.js"
-  },
   "scripts": {
     "build": "echo \"The build step is not required when using JavaScript!\" && exit 0",
     "cdk": "cdk",
